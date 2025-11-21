@@ -67,7 +67,7 @@ tensorboard==2.14.0
 tensorboard-data-server==0.7.2
 tensorboardX==2.6.2.2
 tifffile==2023.7.10
-torch==2.4.0+cu121
+torch==2.8.0
 torchaudio==2.4.0+cu121
 torchmetrics==1.5.2
 torchsummary==1.5.1
