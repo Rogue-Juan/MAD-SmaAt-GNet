@@ -1,2 +1,2 @@
 # MAD-SmaAt-GNet
-Code for the thesis "Quantitative precipitation nowcasting with an advection-based component and multiple weather variables as input".
+Code for the thesis "MAD-SmaAt-GNet: A multimodal advection-directed network for precipitation nowcasting".
