@@ -1,4 +1,4 @@
-"""Code for training NowcastSmaAt and ablation study models"""
+"""Code for training MAD-SmaAt-GNet and ablation study models"""
 
 # Code was based on and adapted from the training script from: https://github.com/HansBambel/SmaAt-UNet
 import argparse
@@ -350,3 +350,4 @@ if __name__ == "__main__":
         output_len=args.n_classes,
     )
     print("Process complete")
+
