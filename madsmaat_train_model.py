@@ -252,10 +252,11 @@ if __name__ == "__main__":
     args.model_name = "evo-net model"
     args.evo_net = False  # Whether to use pre-trained parameters for the Evo-Net
     if args.model_name.lower() in [
-        "nowcastsmaat",
+        "mad_smaat_gnet",
         "full model",
+        "mad-smaat-gnet"
         "evo-net model",
-        "nowcastsmaat_unet_evo",
+        "madsmaat_evo",
     ]:
         args.evo_net = True
 
@@ -350,4 +351,5 @@ if __name__ == "__main__":
         output_len=args.n_classes,
     )
     print("Process complete")
+
 
