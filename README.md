@@ -1,7 +1,7 @@
 # MAD-SmaAt-GNet
 Code for the thesis "MAD-SmaAt-GNet: A multimodal advection-directed network for precipitation nowcasting".
 <img width="2354" height="2351" alt="mad-smaat-gnet" src="https://github.com/user-attachments/assets/247de4d5-8b5f-44fd-988e-66509c40a095" />
-The MAD-SmaAt-GNet model can be found in mad_smaat_gnet/models/[MAD_SmaAt_GNet.py](https://github.com/Rogue-Juan/MAD-SmaAt-GNet/blob/main/mad_smaat_gnet/models/MAD_SmaAt_GNet.py)
+The MAD-SmaAt-GNet model can be found in mad_smaat_gnet/models/[MAD_SmaAt_GNet.py](https://github.com/Rogue-Juan/MAD-SmaAt-GNet/blob/main/mad_smaat_gnet/models/MAD_SmaAt_GNet.py).
 
 ## Installing dependencies
 A snapshot of the used packages with which the models were trained is given in [requirements.txt](https://github.com/Rogue-Juan/MAD-SmaAt-GNet/blob/main/requirements.txt). To reproduce the results, one can install the dependencies as follows:
