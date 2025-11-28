@@ -34,5 +34,5 @@ The plot of the corresponding images of other weather variables is given here be
 
 If you are interested in any of the data that was used in the paper, please write an email to [s.mehrkanoon@uu.nl](mailto:s.mehrkanoon@uu.nl).
 
-The dataset consisted of 5,925 training samples and 1,883 test samples in the HDF5 format with file size X GB.
+The dataset consisted of 5,925 training samples and 1,883 test samples in the HDF5 format with file size 10.3 GB.
 
