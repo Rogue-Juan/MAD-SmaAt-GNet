@@ -152,10 +152,13 @@ class madsmaat_h5(Dataset):
         self.n_samples = h5py.File(self.file_name, "r")["train" if train else "test"][
             "harmo_rain_imgs"
         ].shape[0]
+        self.sequence_length = h5py.File(self.file_name, "r")[
+            "train" if train else "test"
+        ]["harmo_rain_imgs"].shape[1]
 
         self.num_input = num_input_images
         self.num_output = num_output_images
-        self.sequence_length = num_input_images + num_output_images
+        self.prediction_length = num_input_images + num_output_images
 
         self.train = train
         # Dataset is all the samples
@@ -172,15 +175,27 @@ class madsmaat_h5(Dataset):
         rain_imgs = np.array(self.dataset["harmo_rain_imgs"][batch_idx])
         harmo_imgs = np.array(self.dataset["harmonie_images"][batch_idx])
 
+        temp = harmo_imgs[0 : self.num_input]
+        press = harmo_imgs[self.sequence_length : self.sequence_length + self.num_input]
+        humid = harmo_imgs[
+            self.sequence_length * 2 : self.sequence_length * 2 + self.num_input,
+        ]
+        Uwind = harmo_imgs[
+            self.sequence_length * 3 : self.sequence_length * 3 + self.num_input,
+        ]
+        Vwind = harmo_imgs[
+            self.sequence_length * 4 : self.sequence_length * 4 + self.num_input,
+        ]
+        harmo_in = np.concatenate((temp, press, humid, Uwind, Vwind), axis=0)
+
         # apply transformations
         if self.transform is not None:
             rain_imgs = self.transform(rain_imgs)
             harmo_imgs = self.transform(harmo_imgs)
         rain_in = rain_imgs[: self.num_input]  # first 4 images in paper
-        harmo_in = harmo_imgs[: self.num_input * 5]  # 5 variables
 
         target_imgs = rain_imgs[
-            self.num_input : self.sequence_length
+            self.num_input : self.prediction_length
         ]  # 4 images ahead in the paper
 
         return (rain_in, harmo_in), target_imgs
