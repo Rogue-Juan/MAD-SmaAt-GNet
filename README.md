@@ -36,3 +36,12 @@ If you are interested in any of the data that was used in the paper, please writ
 
 The dataset consisted of 5,925 training samples and 1,883 test samples in the HDF5 format with file size 10.3 GB.
 
+## Citation
+```
+@report{VANWONDEREN2025,
+title={MAD-SmaAt-GNet: A multimodal advection-directed network for precipitation nowcasting},
+year={2025},
+author={Samuel van Wonderen and Siamak Mehrkanoon},
+abstract={Present-day precipitation forecasting is often still done with numerical solvers for physical equations that require much computational time and do not use the bulks of available weather data. Deep-learning models have shown much potential in precipitation forecasting, especially for short time horizons (known as "nowcasting"), due to their computational efficiency. Among these models, convolutional neural networks (CNNs) excel in image-to-image tasks, even for image sequences. The SmaAt-UNet is a light-weight CNN model that performed well for precipitation nowcasting. In our paper, SmaAt-UNet was extended with an extra encoder for other weather variables and with a physics-based component, and the Multimodal Advection-Directed Small Attention G-Net model (MAD-SmaAt-GNet) was developed. It was shown that each extension separately improves the rain predictions and that these extensions jointly improve the predictions even more, with a reduction of 9.8\% in MSE compared to SmaAt-UNet for predicted sequences of 4 consecutive rain images up to 4 hours ahead. Furthermore, the experiments showed that the input of additional weather variables is most beneficial for short time horizons whereas the advection-based component improved predictions for both the short and long term.},
+}
+```
