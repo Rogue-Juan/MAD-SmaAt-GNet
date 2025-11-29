@@ -107,13 +107,13 @@ def fit(
                 xb = xb.float().to(dev) / rain_norm
                 zb = zb.float().to(dev)
                 temp = zb[:, 0:input_len, :, :] / temp_norm
-                press = zb[:, input_len : input_len + input_len, :, :] / press_norm
-                humid = zb[:, input_len * 2 : input_len * 2 + input_len, :, :]
+                press = zb[:, input_len : input_len*2, :, :] / press_norm
+                humid = zb[:, input_len * 2 : input_len * 3, :, :]
                 Uwind = (
-                    zb[:, input_len * 3 : input_len * 3 + input_len, :, :] / Uwind_norm
+                    zb[:, input_len * 3 : input_len * 4, :, :] / Uwind_norm
                 )
                 Vwind = (
-                    zb[:, input_len * 4 : input_len * 4 + input_len, :, :] / Vwind_norm
+                    zb[:, input_len * 4 : input_len * 5, :, :] / Vwind_norm
                 )
                 zb = torch.cat((temp, press, humid, Uwind, Vwind), dim=1)
                 y_pred = model(xb, zb)
@@ -135,19 +135,17 @@ def fit(
                     xb = xb.float().to(dev) / rain_norm
                     y_pred = model(xb)
                 else:
-                    xb, zb = xtuple
+                   xb, zb = xtuple
                     xb = xb.float().to(dev) / rain_norm
                     zb = zb.float().to(dev)
                     temp = zb[:, 0:input_len, :, :] / temp_norm
-                    press = zb[:, input_len : input_len + input_len, :, :] / press_norm
-                    humid = zb[:, input_len * 2 : input_len * 2 + input_len, :, :]
+                    press = zb[:, input_len : input_len*2, :, :] / press_norm
+                    humid = zb[:, input_len * 2 : input_len * 3, :, :]
                     Uwind = (
-                        zb[:, input_len * 3 : input_len * 3 + input_len, :, :]
-                        / Uwind_norm
+                        zb[:, input_len * 3 : input_len * 4, :, :] / Uwind_norm
                     )
                     Vwind = (
-                        zb[:, input_len * 4 : input_len * 4 + input_len, :, :]
-                        / Vwind_norm
+                        zb[:, input_len * 4 : input_len * 5, :, :] / Vwind_norm
                     )
                     zb = torch.cat((temp, press, humid, Uwind, Vwind), dim=1)
                     y_pred = model(xb, zb)
@@ -356,3 +354,4 @@ if __name__ == "__main__":
         output_len=args.n_classes,
     )
     print("Process complete")
+
