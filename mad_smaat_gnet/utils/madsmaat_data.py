@@ -20,7 +20,7 @@ def get_train_valid_loader(
 ):
     """
     Utility function for loading and returning train and valid
-    multi-process iterators over the MedcastSmaAt dataset.
+    multi-process iterators over the MAD-SmaAt-GNet dataset.
     If using CUDA, num_workers should be set to 1 and pin_memory to True.
     Parameters:
     ------
@@ -166,14 +166,14 @@ class madsmaat_h5(Dataset):
         self.transform = transform
         self.dataset = None
 
-    def __getitem__(self, batch_idx):
+    def __getitem__(self, sample_idx):
         # load the file here (load as singleton)
         if self.dataset is None:
             self.dataset = h5py.File(self.file_name, "r", rdcc_nbytes=1024**3)[
                 "train" if self.train else "test"
             ]
-        rain_imgs = np.array(self.dataset["harmo_rain_imgs"][batch_idx])
-        harmo_imgs = np.array(self.dataset["harmonie_images"][batch_idx])
+        rain_imgs = np.array(self.dataset["harmo_rain_imgs"][sample_idx])
+        harmo_imgs = np.array(self.dataset["harmonie_images"][sample_idx])
 
         temp = harmo_imgs[0 : self.num_input]
         press = harmo_imgs[self.sequence_length : self.sequence_length + self.num_input]
@@ -191,8 +191,8 @@ class madsmaat_h5(Dataset):
         # apply transformations
         if self.transform is not None:
             rain_imgs = self.transform(rain_imgs)
-            harmo_imgs = self.transform(harmo_imgs)
-        rain_in = rain_imgs[: self.num_input]  # first 4 images in paper
+            harmo_in = self.transform(harmo_in)
+        rain_in = rain_imgs[: self.num_input]  # first 4 images in the paper
 
         target_imgs = rain_imgs[
             self.num_input : self.prediction_length
