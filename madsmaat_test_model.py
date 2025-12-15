@@ -148,14 +148,10 @@ def test_model(
                 xb = xb.float().to(dev) / rain_norm
                 zb = zb.float().to(dev)
                 temp = zb[:, 0:input_len, :, :] / temp_norm
-                press = zb[:, input_len : input_len*2, :, :] / press_norm
+                press = zb[:, input_len : input_len * 2, :, :] / press_norm
                 humid = zb[:, input_len * 2 : input_len * 3, :, :]
-                Uwind = (
-                    zb[:, input_len * 3 : input_len * 4, :, :] / Uwind_norm
-                )
-                Vwind = (
-                    zb[:, input_len * 4 : input_len * 5, :, :] / Vwind_norm
-                )
+                Uwind = zb[:, input_len * 3 : input_len * 4, :, :] / Uwind_norm
+                Vwind = zb[:, input_len * 4 : input_len * 5, :, :] / Vwind_norm
                 zb = torch.cat((temp, press, humid, Uwind, Vwind), dim=1)
                 y_pred = model(xb, zb)
             y_pred = y_pred * rain_norm  # Convert values back to mm/hour
@@ -324,10 +320,10 @@ def main():
     dev = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
     # load model weights and biases
     model = get_model_from_str(args)
-    path_chkpt = f"path/to/your/checkpoints/best_MSELoss_{model.__class__.__name__}.pt"  # Checkpoint file for model
-    model_params = torch.load(path_chkpt, weights_only=True)
+    path_chkpt = f"./checkpoints/statedict_{model.__class__.__name__}.pt"  # Checkpoint file for model
+    state_dict = torch.load(path_chkpt, weights_only=True)
 
-    model.load_state_dict(model_params["state_dict"])
+    model.load_state_dict(state_dict)
     model.to(dev)
     model.eval()
 
@@ -347,7 +343,6 @@ def main():
     # )
 
     print(f"    Model loaded: {model.__class__.__name__}")
-    print(f"    Epoch number: {model_params['epoch']}")
 
     print("Loading test set:")
     # load test set using mad-smaat-gnet utils
@@ -382,4 +377,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

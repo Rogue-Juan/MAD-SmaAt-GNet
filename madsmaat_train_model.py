@@ -81,7 +81,7 @@ def fit(
         dev = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     root = os.getcwd()
-    default_save_path = root + "path/to/your/checkpoints"
+    default_save_path = root + "/checkpoints"
 
     seq_len = input_len + output_len
     rain_norm = 91.55  # Normalise rain input to [0,1]; max value in training set
@@ -107,14 +107,10 @@ def fit(
                 xb = xb.float().to(dev) / rain_norm
                 zb = zb.float().to(dev)
                 temp = zb[:, 0:input_len, :, :] / temp_norm
-                press = zb[:, input_len : input_len*2, :, :] / press_norm
+                press = zb[:, input_len : input_len * 2, :, :] / press_norm
                 humid = zb[:, input_len * 2 : input_len * 3, :, :]
-                Uwind = (
-                    zb[:, input_len * 3 : input_len * 4, :, :] / Uwind_norm
-                )
-                Vwind = (
-                    zb[:, input_len * 4 : input_len * 5, :, :] / Vwind_norm
-                )
+                Uwind = zb[:, input_len * 3 : input_len * 4, :, :] / Uwind_norm
+                Vwind = zb[:, input_len * 4 : input_len * 5, :, :] / Vwind_norm
                 zb = torch.cat((temp, press, humid, Uwind, Vwind), dim=1)
                 y_pred = model(xb, zb)
             y_pred = y_pred * rain_norm  # Denormalise output to mm/h
@@ -135,18 +131,14 @@ def fit(
                     xb = xb.float().to(dev) / rain_norm
                     y_pred = model(xb)
                 else:
-                   xb, zb = xtuple
+                    xb, zb = xtuple
                     xb = xb.float().to(dev) / rain_norm
                     zb = zb.float().to(dev)
                     temp = zb[:, 0:input_len, :, :] / temp_norm
-                    press = zb[:, input_len : input_len*2, :, :] / press_norm
+                    press = zb[:, input_len : input_len * 2, :, :] / press_norm
                     humid = zb[:, input_len * 2 : input_len * 3, :, :]
-                    Uwind = (
-                        zb[:, input_len * 3 : input_len * 4, :, :] / Uwind_norm
-                    )
-                    Vwind = (
-                        zb[:, input_len * 4 : input_len * 5, :, :] / Vwind_norm
-                    )
+                    Uwind = zb[:, input_len * 3 : input_len * 4, :, :] / Uwind_norm
+                    Vwind = zb[:, input_len * 4 : input_len * 5, :, :] / Vwind_norm
                     zb = torch.cat((temp, press, humid, Uwind, Vwind), dim=1)
                     y_pred = model(xb, zb)
                 y_pred = y_pred * rain_norm  # Convert values back to mm/hour
@@ -354,4 +346,3 @@ if __name__ == "__main__":
         output_len=args.n_classes,
     )
     print("Process complete")
-
