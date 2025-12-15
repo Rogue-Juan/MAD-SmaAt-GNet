@@ -32,14 +32,13 @@ def get_model_from_str(args):
         return madsmaat_2stream(hparams=args)
     elif args.model_name.lower() in ["evo-net model", "madsmaat_evo"]:
         return madsmaat_evo(hparams=args)
-    elif args.model_name.lower() in ["smaat_unet", "smaat u-net"]:
+    elif args.model_name.lower() in ["smaat_unet", "smaat u-net", "smaat-unet"]:
         return SmaAt_UNet(
             n_channels=args.n_channels,
             n_classes=args.n_classes,
             kernels_per_layer=args.rain_kernelsPL,
             bilinear=args.smaat_bilinear,
             reduction_ratio=args.rain_reduc_ratio,
-            base_c=args.base_c,
         )
     elif args.model_name.lower() in ["evo-net", "evonet"]:
         return EvoNet(
@@ -162,7 +161,7 @@ def test_model(
             if count == 120:  # 22 # 40, 120 01mm
                 example_ytrue = yb.cpu().numpy()
                 example_ypred = y_pred.cpu().numpy()
-                break
+                # break
 
             if checks:
                 assert (
