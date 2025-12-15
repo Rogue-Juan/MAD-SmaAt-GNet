@@ -30,8 +30,8 @@ class MAD_SmaAt_GNet(nn.Module):
         self.base_c = hparams.base_c  # Base number of channels (32)
         self.rain_kernelsPL = hparams.rain_kernelsPL  # kernels per layer
         self.rain_reduc_ratio = hparams.rain_reduc_ratio
-        self.harmo_kernelsPL = hparams.harmo_kernelsPL
-        self.harmo_reduc_ratio = hparams.harmo_reduc_ratio
+        self.var_kernelsPL = hparams.var_kernelsPL
+        self.var_reduc_ratio = hparams.var_reduc_ratio
         self.dec_kernelsPL = hparams.dec_kernelsPL
 
         ## Evolution Network from NowcastNet for physically consistent rain predictions
@@ -50,8 +50,8 @@ class MAD_SmaAt_GNet(nn.Module):
         ## HARMONIE encoder
         self.two_stream_encoder = TwoStreamEncoder(
             self.harmo_channels,
-            self.harmo_kernelsPL,
-            self.harmo_reduc_ratio,
+            self.var_kernelsPL,
+            self.var_reduc_ratio,
             self.base_c,
             self.smaat_bilinear,
         )
