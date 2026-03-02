@@ -16,7 +16,7 @@ NOTE THAT the path to the dataset and the ``default_save_path`` needs to be set 
 
 ## Testing
 The testing script for the models is given in [madsmaat_test_models.py](https://github.com/Rogue-Juan/MAD-SmaAt-GNet/blob/main/madsmaat_test_model.py).
-NOTE THAT the path to the dataset, the path to the checkpoint file of the model, and the path for the JSON file of the results need to set manually by the user. Similar to the training script, the user can specify which model to test by changing ``args.model_name`` to the correct model. The hyperparameter values used for the pre-trained models are the values listed in the script. Note that the data are normalised and denormalised in the training script.
+NOTE THAT the path to the dataset, the path to the checkpoint file of the model, and the path for the JSON file of the results need to be set manually by the user. Similar to the training script, the user can specify which model to test by changing ``args.model_name`` to the correct model. The hyperparameter values used for the pre-trained models are the values listed in the script. Note that the data are normalised and denormalised in the testing script.
 
 Additionally, the results can be obtained per time step, i.e. per image, with the [test_model_per_img.py](https://github.com/Rogue-Juan/MAD-SmaAt-GNet/blob/main/test_model_per_img.py). This script operates the same way as madsmaat_test_models.py but calculates the results per image.
 
