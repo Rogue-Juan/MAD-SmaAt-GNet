@@ -63,11 +63,11 @@ tensorboard==2.20.0
 tensorboard-data-server==0.7.2
 tensorboardX==2.6.4
 tifffile==2024.8.30
-torch==2.8.0+cu126
+torch==2.8.0 --index-url https://download.pytorch.org/whl/cu126
 torchaudio==2.8.0
 torchmetrics==1.8.1
 torchsummary==1.5.1
-torchvision==0.23.0+cu126
+torchvision==0.23.0 --index-url https://download.pytorch.org/whl/cu126
 tqdm==4.67.1
 typing_extensions==4.15.0
 tzdata==2025.2
