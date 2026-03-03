@@ -8,11 +8,11 @@ A snapshot of the used packages with which the models were trained is given in [
 ```
 pip install -r requirements.txt
 ```
-Note that the models were trained with a GPU that was CUDA-enabled; as such, PyTorch was installed with CUDA enabled. If you do not want this, replace ``torch==2.8.0+cuda126`` with ``torch==2.8.0`` in your requirements.txt. The training and testing scripts check whether CUDA is available and do not need to be changed. However, the data loader has ``pin_memory=True`` and ``num_workers=1`` which are optimal for CUDA. Change these in the code if necessary.
+Note that the models were trained with a GPU that was CUDA-enabled; as such, PyTorch was installed with CUDA enabled. If you do not want this, replace ``torch==2.8.0 --index-url ...`` with ``torch==2.8.0`` in the requirements.txt. The training and testing scripts check whether CUDA is available and do not need to be changed. However, the data loader has ``pin_memory=True`` and ``num_workers=1`` which are optimal for CUDA. Change these in the code if necessary.
 
 ## Training
 The training script for the models is given in [madsmaat_train_model.py](https://github.com/Rogue-Juan/MAD-SmaAt-GNet/blob/main/madsmaat_train_model.py).
-NOTE THAT the path to the dataset and the ``default_save_path`` needs to be set by the user manually as well as the path to a pre-trained evo-net which is used in the models MAD-SmaAt-GNet and SmaAt-UNet with Evo-Net. The model to be trained can be set by changing ``args.model_name`` to the name of that model. The hyperparameter values used for the training of the models are the values listed in the script. Note that the data are normalised and denormalised in the training script.
+NOTE THAT the path to the dataset and the ``default_save_path`` in [train_model.py](https://github.com/Rogue-Juan/MAD-SmaAt-GNet/blob/main/mad_smaat_gnet/utils/train_model.py) need to be set by the user manually as well as the path to a pre-trained evo-net which is used in the models MAD-SmaAt-GNet and SmaAt-UNet with Evo-Net. The model to be trained can be set by changing ``args.model_name`` to the name of that model. The hyperparameter values used for the training of the models are the values listed in the script. Note that the data are normalised and denormalised in the training script.
 
 ## Testing
 The testing script for the models is given in [madsmaat_test_models.py](https://github.com/Rogue-Juan/MAD-SmaAt-GNet/blob/main/madsmaat_test_model.py).
