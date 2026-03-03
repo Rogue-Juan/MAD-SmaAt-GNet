@@ -5,7 +5,7 @@ import numpy as np
 from torch.utils.data.sampler import SubsetRandomSampler
 
 
-# Taken from: https://gist.github.com/kevinzakka/d33bf8d6c7f06a9d8c76d97a7879f5cb
+# Taken from: https://github.com/HansBambel/SmaAt-UNet/tree/snapshot-paper/utils
 def get_train_valid_loader(
     data_fn: str,
     batch_size: int,
