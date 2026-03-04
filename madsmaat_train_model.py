@@ -99,7 +99,7 @@ if __name__ == "__main__":
     model = get_model_from_str(args)
 
     if args.evo_net:
-        path_chkpt = f"path/to/your/checkpoints/best_MSELoss_EvoNet.pt"  #### CHANGED # Checkpoint file for model
+        path_chkpt = f"path/to/your/checkpoints/best_MSELoss_EvoNet.pt"  # Checkpoint file for the evo-net component
         model_params = torch.load(path_chkpt, weights_only=False)  # weights_only=True
         state_dict = model_params["state_dict"]
         state_dict = {
