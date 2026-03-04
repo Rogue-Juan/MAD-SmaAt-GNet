@@ -1,6 +1,6 @@
 # MAD-SmaAt-GNet
 Code for the thesis "MAD-SmaAt-GNet: A multimodal advection-directed network for precipitation nowcasting".
-<img width="2344" height="2341" alt="mad-smaat-gnet" src="https://github.com/user-attachments/assets/ff8122ec-7f00-466c-bd91-1db2e1eb105b" />
+<img width="2352" height="2349" alt="mad-smaat-gnet" src="https://github.com/user-attachments/assets/50ca2e90-02cb-4b32-8d57-40a74dc3e54c" />
 The MAD-SmaAt-GNet model can be found in mad_smaat_gnet/models/[MAD_SmaAt_GNet.py](https://github.com/Rogue-Juan/MAD-SmaAt-GNet/blob/main/mad_smaat_gnet/models/MAD_SmaAt_GNet.py).
 
 ## Installing dependencies
@@ -45,3 +45,4 @@ author={Samuel van Wonderen and Siamak Mehrkanoon},
 abstract={Present-day precipitation forecasting is often still done with numerical solvers for physical equations that require much computational time and do not use the bulks of available weather data. Deep-learning models have shown much potential in precipitation forecasting, especially for short time horizons (known as "nowcasting"), due to their computational efficiency. Among these models, convolutional neural networks (CNNs) excel in image-to-image tasks, even for image sequences. The SmaAt-UNet is a light-weight CNN model that performed well for precipitation nowcasting. In our paper, SmaAt-UNet was extended with an extra encoder for other weather variables and with a physics-based component, and the Multimodal Advection-Directed Small Attention G-Net model (MAD-SmaAt-GNet) was developed. It was shown that each extension separately improves the rain predictions and that these extensions jointly improve the predictions even more, with a reduction of 9.8\% in MSE compared to SmaAt-UNet for predicted sequences of 4 consecutive rain images up to 4 hours ahead. Furthermore, the experiments showed that the input of additional weather variables is most beneficial for short time horizons whereas the advection-based component improved predictions for both the short and long term.},
 }
 ```
+
