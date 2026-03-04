@@ -4,7 +4,6 @@ import numpy
 def plot_preds(example_ytrue, example_ypred, model_name: str, num_imgs: int = 4):
     layout_var = "none" if num_imgs == 1 else "constrained"
     fig, ax = plt.subplots(ncols=2, nrows=num_imgs, layout=layout_var)
-    # plt.suptitle("Persistence model", fontsize=14)
 
     max_val = example_ytrue.max()
     min_val = example_ytrue.min()

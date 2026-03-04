@@ -9,7 +9,7 @@ from torch.utils.data import DataLoader
 from torch import optim
 from torch import nn
 from tqdm import tqdm
-from mad_smaat_gnet.utils import madsmaat_data
+from mad_smaat_gnet.utils import madsmaat_dataloader
 from mad_smaat_gnet.utils.get_model_from_str import get_model_from_str
 from mad_smaat_gnet.utils.train_model import fit
 
@@ -81,7 +81,7 @@ if __name__ == "__main__":
     print("Loading datasets:")
     dataset_file = args.dataset_folder + args.dataset_fn
     # Load your dataset into data loaders here
-    train_dl, valid_dl = madsmaat_data.get_train_valid_loader(
+    train_dl, valid_dl = madsmaat_dataloader.get_train_valid_loader(
         data_fn=dataset_file,
         batch_size=args.batch_size,
         random_seed=42,

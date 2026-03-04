@@ -13,7 +13,7 @@ from torch import optim
 from torch import nn
 import time
 from tqdm import tqdm
-from mad_smaat_gnet.utils import madsmaat_data
+from mad_smaat_gnet.utils import madsmaat_dataloader
 from mad_smaat_gnet.utils.plot_preds import plot_preds
 
 def test_model(
@@ -173,7 +173,7 @@ def test_model(
     )
 
     if save_folder != "":
-        file_name = save_folder + "/" + save_fn
+        file_name = save_folder + save_fn
         exists = os.path.exists(file_name)
         if exists:
             print("File already exists")
@@ -184,7 +184,7 @@ def test_model(
             new_fn = (
                 file_name
                 if add2fn in ["overwrite", "replace"]
-                else save_folder + "/" + new_fn + add2fn + ".json"
+                else save_folder + new_fn + add2fn + ".json"
             )
             if add2fn not in ["overwrite", "replace"]:
                 results["model"] = results["model"] + "_" + add2fn

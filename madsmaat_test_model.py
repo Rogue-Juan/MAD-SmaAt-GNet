@@ -7,7 +7,7 @@ from torch import optim
 from torch import nn
 from tqdm import tqdm
 import argparse
-from mad_smaat_gnet.utils import madsmaat_data
+from mad_smaat_gnet.utils import madsmaat_dataloader
 from mad_smaat_gnet.utils.test_model import test_model
 from mad_smaat_gnet.utils.get_model_from_str import get_model_from_str
 
@@ -75,7 +75,7 @@ def main():
     print("Loading test set:")
     dataset_fn = args.folder_test_set + args.fn_test_set
     # load test set using mad-smaat-gnet utils
-    test_dl = madsmaat_data.get_test_loader(
+    test_dl = madsmaat_dataloader.get_test_loader(
         data_fn=dataset_fn,
         batch_size=1,  # USE CONSISTENT BATCH SIZE WHEN COMPARING MODELS
         num_input_images=args.n_channels,

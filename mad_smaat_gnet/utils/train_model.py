@@ -10,7 +10,7 @@ from torch.utils.data import DataLoader
 from torch import optim
 from torch import nn
 from tqdm import tqdm
-from mad_smaat_gnet.utils import madsmaat_data
+from mad_smaat_gnet.utils import madsmaat_dataloader
 from mad_smaat_gnet.utils.get_model_from_str import get_model_from_str
 from typing import Optional
 import time

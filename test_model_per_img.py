@@ -2,11 +2,6 @@
 
 # Code was based on and adapted from the training script from: https://github.com/HansBambel/SmaAt-UNet
 import argparse
-from mad_smaat_gnet.models.MAD_SmaAt_GNet import MAD_SmaAt_GNet
-from mad_smaat_gnet.models.madsmaat_2stream import madsmaat_2stream
-from mad_smaat_gnet.models.madsmaat_evo import madsmaat_evo
-from mad_smaat_gnet.models.madsmaat_components import EvoNet
-from smaat.SmaAt_UNet import SmaAt_UNet
 from mad_smaat_gnet.utils.binary_metrics import *
 import os
 import sys
@@ -22,92 +17,17 @@ from torch import nn
 import time
 from tqdm import tqdm
 import argparse
-from mad_smaat_gnet.utils import madsmaat_data
+from mad_smaat_gnet.utils import madsmaat_dataloader
+from mad_smaat_gnet.utils.get_model_from_str import get_model_from_str
+from mad_smaat_gnet.utils.plot_preds import plot_preds
 
 
-def get_model_from_str(args):
-    if args.model_name.lower() in ["mad_smaat_gnet", "full model", "mad-smaat-gnet"]:
-        return MAD_SmaAt_GNet(hparams=args)
-    elif args.model_name.lower() in ["2-stream model", "madsmaat_2stream"]:
-        return madsmaat_2stream(hparams=args)
-    elif args.model_name.lower() in ["evo-net model", "madsmaat_evo"]:
-        return madsmaat_evo(hparams=args)
-    elif args.model_name.lower() in ["smaat_unet", "smaat u-net"]:
-        return SmaAt_UNet(
-            n_channels=args.n_channels,
-            n_classes=args.n_classes,
-            kernels_per_layer=args.rain_kernelsPL,
-            bilinear=args.smaat_bilinear,
-            reduction_ratio=args.rain_reduc_ratio,
-            base_c=args.base_c,
-        )
-    elif args.model_name.lower() in ["evo-net", "evonet"]:
-        return EvoNet(
-            n_channels=args.n_channels,
-            n_classes=args.n_classes,
-            base_c=args.base_c,
-            evo_bilinear=args.evo_bilinear,
-            height_rain=args.img_height,
-            width_rain=args.img_width,
-        )
-    else:
-        assert True == False, f"Unknown model, got: {args.model_name}"
-
-
-def plot_preds(example_ytrue, example_ypred, model_name: str, num_imgs: int = 4):
-    layout_var = "none" if num_imgs == 1 else "constrained"
-    fig, ax = plt.subplots(ncols=2, nrows=num_imgs, layout=layout_var)
-    # plt.suptitle("Persistence model", fontsize=14)
-
-    max_val = example_ytrue.max()
-    min_val = example_ytrue.min()
-
-    if num_imgs == 1:
-        ax = [ax]
-
-    row_num = 0
-    col_num = 0
-    for row in ax:
-        for col in row:
-            if col_num % 2 == 0:
-                if row_num == 0:
-                    col.set_title(model_name)
-                im = col.imshow(
-                    example_ypred[0, row_num],
-                    cmap="viridis",
-                    vmin=min_val,
-                    vmax=max_val,
-                )
-                col.set_yticks([])
-                col.set_xticks([])
-                col.set_ylabel(f"t={row_num}")
-            else:
-                if row_num == 0:
-                    col.set_title("Ground truth")
-                im = col.imshow(
-                    example_ytrue[0, row_num],
-                    cmap="viridis",
-                    vmin=min_val,
-                    vmax=max_val,
-                )
-                col.set_yticks([])
-                col.set_xticks([])
-                col.set_ylabel(f"t={row_num}")
-            col_num += 1
-        row_num += 1
-
-    # fig.subplots_adjust(right=0.8)
-    cbar_ax = fig.add_axes((0.85, 0.15, 0.05, 0.7))
-    fig.colorbar(im, cax=cbar_ax, orientation="vertical", label="[mm/h]")
-    plt.show()
-    return True
-
-
-def test_model(
+def test_model_per_img(
     model,
     dev,
     test_dl,
     only_rain_data: bool,
+    save_folder: str = "",
     save_fn: str = "",
     input_len: int = 4,
     output_len: int = 4,
@@ -116,7 +36,11 @@ def test_model(
     example_ytrue = None
     example_ypred = None
 
-    norm_factor = 91.55  # Normalise input to [0,1]
+    rain_norm = 91.55  # Normalise rain input to [0,1]; max value in training set
+    temp_norm = 307.72  # Normalisation with max value in training set
+    press_norm = 104281.06  # Idem
+    Uwind_norm = 39.58
+    Vwind_norm = 33.52
     seq_len = input_len + output_len
 
     # Binary metrics
@@ -137,22 +61,20 @@ def test_model(
             count += 1
             if only_rain_data:
                 xb, _ = xtuple
-                xb = xb.float().to(dev) / norm_factor
+                xb = xb.float().to(dev) / rain_norm
                 y_pred = model(xb)
             else:
                 xb, zb = xtuple
-                xb = xb.float().to(dev) / norm_factor
+                xb = xb.float().to(dev) / rain_norm
                 zb = zb.float().to(dev)
-                temp = (
-                    zb[:, 0:input_len, :, :] / 307.72
-                )  # Normalisation with max value in training set
-                press = zb[:, seq_len : seq_len + input_len, :, :] / 104281.06  # Idem
-                humid = zb[:, seq_len * 2 : seq_len * 2 + input_len, :, :]
-                Uwind = zb[:, seq_len * 3 : seq_len * 3 + input_len, :, :] / 39.58
-                Vwind = zb[:, seq_len * 4 : seq_len * 4 + input_len, :, :] / 33.52
+                temp = zb[:, 0:input_len, :, :] / temp_norm
+                press = zb[:, input_len : input_len * 2, :, :] / press_norm
+                humid = zb[:, input_len * 2 : input_len * 3, :, :]
+                Uwind = zb[:, input_len * 3 : input_len * 4, :, :] / Uwind_norm
+                Vwind = zb[:, input_len * 4 : input_len * 5, :, :] / Vwind_norm
                 zb = torch.cat((temp, press, humid, Uwind, Vwind), dim=1)
                 y_pred = model(xb, zb)
-            y_pred = y_pred * norm_factor  # Convert values back to mm/hour
+            y_pred = y_pred * rain_norm  # Convert values back to mm/hour
 
             y_pred = y_pred.to(dev)
             yb = yb.float().to(dev)
@@ -262,19 +184,18 @@ def test_model(
     )
 
     if save_fn != "":
-        exists = os.path.exists(save_fn)
+        file_name = save_folder + save_fn
+        exists = os.path.exists(file_name)
         if exists:
             print("File already exists")
-            new_fn = (
-                f"path/to/your/results/test_results_per_img_{model.__class__.__name__}_"
-            )
+            new_fn = f"test_results_per_img_{model.__class__.__name__}_"
             add2fn = input(
                 "Please give an additional description to the file name or 'overwrite/replace': "
             )
             new_fn = (
-                save_fn
+                file_name
                 if add2fn in ["overwrite", "replace"]
-                else new_fn + add2fn + ".json"
+                else save_folder + new_fn + add2fn + ".json"
             )
             if add2fn not in ["overwrite", "replace"]:
                 results["model"] = results["model"] + "_" + add2fn
@@ -283,7 +204,7 @@ def test_model(
             print("Results saved")
         else:
             print("Saving results to JSON...")
-            with open(save_fn, "w") as f:
+            with open(file_name, "w") as f:
                 json.dump(results, f, indent=4)
             print("Results saved")
 
@@ -293,12 +214,13 @@ def test_model(
 
 
 def main():
-    fn_test_set = "path/to/your/data.h5"  # HDF5 file with test set
     parser = argparse.ArgumentParser()
     args = parser.parse_args()
+    args.folder_test_set = "path/to/your/data/"
+    args.fn_test_set = "data.h5"  # HDF5 file with test set
     args.n_channels = 4  # Number of input rain images
     args.n_classes = 4  # Number of target rain images
-    args.harmonie_n_channels = 20  # Number of input images of other variables
+    args.two_stream_channels = 20  # Number of input images of other variables
     args.img_height = 115  # Height of input images
     args.img_width = 115  # Width of input images
     args.evo_bilinear = True  # Bilinear interpolation is used or not
@@ -306,8 +228,8 @@ def main():
     args.base_c = 16  # Base number of channels (32)
     args.rain_kernelsPL = 2  # kernels per layer
     args.rain_reduc_ratio = 16  # Reduction factor in CBAM
-    args.harmo_kernelsPL = 2  # Number of kernels/filters per double convolutional layer
-    args.harmo_reduc_ratio = 16  # Reduction factor in CBAM
+    args.var_kernelsPL = 2  # Number of kernels/filters per double convolutional layer
+    args.var_reduc_ratio = 16  # Reduction factor in CBAM
     args.dec_kernelsPL = 2  # Number of kernels/filters per double convolutional layer
     args.model_name = "mad-smaat-gnet"
     args.only_rain_data = False  # Use only rain input images
@@ -321,18 +243,20 @@ def main():
     ]:
         args.only_rain_data = True
 
+    args.save_folder = "path/to/your/results/"
+
     print("Loading model:")
     dev = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
     # load model weights and biases
     model = get_model_from_str(args)
-    path_chkpt = f"path/to/your/checkpoints/best_MSELoss_{model.__class__.__name__}.pt"  # Checkpoint file for model
-    model_params = torch.load(path_chkpt, weights_only=False)
+    path_chkpt = f"./checkpoints/statedict_{model.__class__.__name__}.pt"  # Checkpoint file for model
+    state_dict = torch.load(path_chkpt, weights_only=True)
 
-    model.load_state_dict(model_params["state_dict"])
+    model.load_state_dict(state_dict)
     model.to(dev)
     model.eval()
 
-    save_fn = f"path/to/your/results/test_results_per_img_{model.__class__.__name__}.json"  # Path and file name to store the results in
+    save_fn = f"test_results_per_img_{model.__class__.__name__}.json"  # Path and file name to store the results in
 
     ######## Summary of parameters and model size
     # summary_in = (
@@ -348,12 +272,12 @@ def main():
     # )
 
     print(f"    Model loaded: {model.__class__.__name__}")
-    print(f"    Epoch number: {model_params['epoch']}")
 
     print("Loading test set:")
+    dataset_fn = args.folder_test_set + args.fn_test_set
     # load test set using nowcastsmaat utils
-    test_dl = madsmaat_data.get_test_loader(
-        data_fn=fn_test_set,
+    test_dl = madsmaat_dataloader.get_test_loader(
+        data_fn=dataset_fn,
         batch_size=1,  # USE CONSISTENT BATCH SIZE WHEN COMPARING MODELS
         num_input_images=args.n_channels,
         num_output_images=args.n_classes,
@@ -366,11 +290,12 @@ def main():
 
     print("Running tests per img...")
 
-    test_model(
+    test_model_per_img(
         model=model,
         dev=dev,
         test_dl=test_dl,
         only_rain_data=args.only_rain_data,
+        save_folder=args.save_folder,
         save_fn=save_fn,
         input_len=args.n_channels,
         output_len=args.n_classes,
