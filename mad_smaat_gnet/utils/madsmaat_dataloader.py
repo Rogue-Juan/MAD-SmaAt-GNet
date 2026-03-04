@@ -1,3 +1,5 @@
+"""Training, testing, and validation data loaders for the MAD-SmaAt data class"""
+
 from torch.utils.data import Dataset
 import h5py
 import torch
@@ -135,9 +137,10 @@ def get_test_loader(
 
     return data_loader
 
+# Sanity check
 if __name__ == "__main__":
     # Change 'from mad_smaat_gnet.utils.madsmaat_data import madsmaat_h5' to 'from madsmaat_data import madsmaat_h5'
-    # to run this code
+    # to run this script
     print("Opening files...")
     filename = "path/to/your/data.h5"
     train_dl, valid_dl = get_train_valid_loader(

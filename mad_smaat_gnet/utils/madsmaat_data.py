@@ -1,9 +1,11 @@
+"""Data class for MAD-SmaAt-GNet data"""
+
 from torch.utils.data import Dataset
 import h5py
 import torch
 import numpy as np
 
-# Data class for MAD-SmaAt-GNet data
+
 class madsmaat_h5(Dataset):
     def __init__(
         self,
